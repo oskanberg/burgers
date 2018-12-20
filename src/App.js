@@ -2,6 +2,13 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import styled from 'styled-components';
 import './App.css';
+import lettuce from './lettuce.png';
+import tomato from './tomato.png';
+import onion from './onion.png';
+import pickle from './pickle.png';
+import sauce from './sauce.svg';
+import mushroom from './mushroom.svg';
+
 
 const requestFullscreen = (ele) => {
   if (ele.requestFullscreen) {
@@ -31,32 +38,38 @@ const Index = () => (
 );
 
 
+const ContentImg = styled.img`
+  height: 2em;
+  width: 2em;
+  margin: 0.5em 0;
+`;
+
+const ContentRow = styled.div`
+  justify-content: center;
+  display:flex;
+  flex-direction: row;
+`;
+
 const Item = props => {
-  let styleMap = {
-    "MUSHROOM": {
-      color: "#d7c3aa"
-    },
-    "LETTUCE": {
-      color: "#9dbe70"
-    },
-    "SAUCE": {
-      color: "rgb(231, 194, 58)"
-    },
-    "ONION": {
-      color: "#703e13"
-    },
-    "PICKLE": {
-      color: "#71be58"
-    },
-    "TOMATO": {
-      color: "#973030"
-    }
+  let srcMap = {
+    "MUSHROOM": mushroom,
+    "LETTUCE": lettuce,
+    "SAUCE": sauce,
+    "ONION": onion,
+    "PICKLE": pickle,
+    "TOMATO": tomato
   }
 
-  return (<p {...props}
-    style={styleMap[props.content]}>
-    {props.content}
-  </p>)
+  let { type, amount } = props;
+
+  let icons = [];
+  for (let i = 0; i < amount; i++) {
+    icons.push(<ContentImg src={srcMap[type]} alt={props.content} />)
+  }
+
+  return (<ContentRow>
+    {icons}
+  </ContentRow>)
 };
 
 const PointMarker = styled.span`
@@ -72,6 +85,7 @@ const PointMarker = styled.span`
 
 const Card = props => {
   let { contents, points, active } = props;
+  let unique = [...new Set(contents)];
 
   return (
     <div
@@ -81,8 +95,9 @@ const Card = props => {
         opacity: active ? 1 : 0.3
       }}>
       <PointMarker>{points}</PointMarker>
-      {contents.map((c, i) => {
-        return <Item key={i} content={c}></Item>
+      {unique.map((c, i) => {
+        let amount = contents.filter(i => i === c).length;
+        return <Item key={i} type={c} amount={amount}></Item>
       })}
     </div>
   );
